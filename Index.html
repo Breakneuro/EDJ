@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;">
+</canvas>
+
+<script>
+
+	// Ligando o canvas ao código javascript
+	var canvas = document.getElementById("myCanvas");
+	var context = canvas.getContext("2d");
+
+	var Ball = function(x, y, color)
+	{
+		this.x = x; 
+		this.y = y; 
+		this.color = color;	
+
+		this.radius = 50;
+		this.speed_x = 10;
+		this.speed_y = 10;
+		
+		this.intersect = function(ball)
+		{
+			// basico				
+			//var hypotenuse = Math.sqrt(Math.pow(this.x - ball.x,2) + 
+			// 			     Math.pow(this.y - ball.y,2));
+			//var distance = this.radius + ball.radius;
+
+			// adaptado
+			var hypotenuse = Math.pow(this.x - ball.x,2) + 
+					         Math.pow(this.y - ball.y,2);			
+			var distance = Math.pow(this.radius + ball.radius,2);
+			
+			return hypotenuse < distance;
+		}		
+	}
+	
+	var ball = [];
+	ball.push(new Ball(50,50,"yellow"));
+	ball.push(new Ball(canvas.width-50,canvas.height-50,"orange"));
+
+	// função para escrever no canvas
+	function drawText(x,y,text)
+	{
+		context.fillStyle = "#000000";
+		context.font = "20px Arial";
+		context.fillText(text, x, y);		
+	}
+	
+	// função para desenhar circulos 
+	function drawCircle(x,y,r,color)
+	{
+		context.fillStyle = color;
+		context.beginPath();
+		context.arc( x, y, r, 0, 2 * Math.PI);
+		context.fill();
+	}
+	
+	// função de atualização de ações
+	function update()
+	{
+		for (var i in ball)
+		{
+			ball[i].x += ball[i].speed_x;
+			ball[i].y += ball[i].speed_y;
+			
+			if (ball[i].x - ball[i].radius < 0 ||
+				ball[i].x + ball[i].radius > canvas.width)
+			{
+				ball[i].speed_x *= -1;
+			}
+			
+			if (ball[i].y - ball[i].radius < 0 ||
+				ball[i].y + ball[i].radius > canvas.height)
+			{
+				ball[i].speed_y *= -1;
+			}		
+		}
+		
+		if (ball[0].intersect(ball[1]))
+		{
+			for (var i in ball)
+			{
+				ball[i].color = "red";
+			}
+		}
+		else
+		{			
+			ball[0].color = "yellow";
+			ball[1].color = "orange";
+		}
+	}
+	
+	// função de desenho
+	function draw()
+	{
+		// função de limpeza de área retangular
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	
+		/*
+			drawText(10,  30, "x: " + x);		
+			drawText(10,  60, "y: " + y);		
+			drawText(10,  90, "speed_x: " + speed_x);		
+			drawText(10, 120, "speed_y: " + speed_y);		
+		*/	
+		
+		for (var i in ball)
+		{
+			drawCircle(ball[i].x, ball[i].y, ball[i].radius, ball[i].color);		
+		}
+	}
+	
+	// ciclo da aplicação
+	function loop()
+	{
+		update();
+		draw();
+		setTimeout(loop, 30);
+	}
+	
+	loop();
+	
+</script>
+
+</body>
+</html>
