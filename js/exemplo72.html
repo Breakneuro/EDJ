@@ -1,0 +1,55 @@
+<html>
+<body onLoad="start()">
+
+<canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;">
+</canvas>
+
+<script src="lib/createjs-2013.05.14.min.js"></script>
+
+<script src="javascript/Ball.js"></script>
+
+<script>	
+		var stage;
+		var balls = [];
+		
+		var MAX = prompt("Entre com a quantidade de circulos: ", 100);
+		
+		var colors = ["#000000","#ff0000","#00ff00","#0000ff","#ffff00","#ff00ff","#00ffff"];
+		
+		function start() 
+		{	
+			stage = new createjs.Stage("myCanvas");
+			
+			for (var i = 0; i < MAX; i++)
+			{	
+				var x = 20 + Math.floor(Math.random() * (stage.canvas.width - 40));
+				var y = 20 + Math.floor(Math.random() * (stage.canvas.height - 40));
+				var radius = 10 + Math.floor(Math.random() * 11);
+				var color = colors[Math.floor(Math.random() * colors.length)];
+				var aux = -10 + Math.floor(Math.random() * 21);
+				var speed_x = aux == 0 ? 1 : aux;
+				aux = -10 + Math.floor(Math.random() * 21);
+				var speed_y = aux == 0 ? 1 : aux;				
+				
+				balls.push(new Ball(x, y, radius, color, speed_x, speed_y));
+				balls[i].setup(stage);
+			}
+			
+			createjs.Ticker.setFPS(30); 
+			
+			createjs.Ticker.addEventListener("tick", loop);
+		}
+		
+		// ciclo da aplicação
+		function loop()
+		{
+			for (var i in balls)
+			{
+				balls[i].update(stage.canvas);
+			}
+		
+			stage.update();			
+		}
+</script>
+</body>
+</html>
